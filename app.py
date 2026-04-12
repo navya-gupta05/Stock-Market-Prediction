@@ -10,8 +10,8 @@ model = load_model('Stock Predictions Model.keras')
 st.header('Stock Market Predictor')
 
 stock =st.text_input('Enter Stock Symnbol', 'GOOG')
-start = '2012-01-01'
-end = '2022-12-31'
+start = '2016-01-01'
+end = '2026-04-01'
 
 data = yf.download(stock, start ,end)
 
