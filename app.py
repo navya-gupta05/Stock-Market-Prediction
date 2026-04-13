@@ -9,7 +9,7 @@ from sklearn.preprocessing import MinMaxScaler
 # Load model (cached)
 @st.cache_resource
 def load_my_model():
-    return load_model("Stock Predictions Model.keras")
+    return load_model("Stock_Predictions_Model.h5")
 
 model = load_my_model()
 
