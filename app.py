@@ -20,6 +20,10 @@ end = '2026-04-01'
 # Fetch data
 data = yf.download(stock, start, end)
 
+if data.empty:
+    st.error(f"No data found for '{stock}'. This is likely due to Yahoo Finance blocking the request or an invalid ticker.")
+    st.stop()
+
 st.subheader('Stock Data')
 st.write(data)
 
