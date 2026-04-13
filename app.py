@@ -5,13 +5,17 @@ from keras.models import load_model
 import streamlit as st
 import matplotlib.pyplot as plt
 
-model = load_model('Stock Predictions Model.keras')
+@st.cache_resource
+def load_my_model():
+    return load_model("Stock Predictions Model.keras")
+
+model = load_my_model()
 
 st.header('Stock Market Predictor')
 
 stock =st.text_input('Enter Stock Symbol', 'GOOG')
-start = '2012-01-01'
-end = '2022-12-31'
+start = '2020-01-01'
+end = '2026-04-01'
 
 data = yf.download(stock, start ,end)
 
