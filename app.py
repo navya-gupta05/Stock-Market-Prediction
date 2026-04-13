@@ -7,11 +7,7 @@ import matplotlib.pyplot as plt
 from sklearn.preprocessing import MinMaxScaler
 
 # Load model (cached)
-@st.cache_resource
-def load_my_model():
-    return load_model("Stock_Predictions_Model.keras")
-
-model = load_my_model()
+model = load_model("Stock Predictions Model.keras")
 
 st.header('Stock Market Predictor')
 
