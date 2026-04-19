@@ -112,17 +112,14 @@ latest_prediction = predict[-1][0]
 # (Optional) Get the last actual price to compare
 latest_actual = y[-1]
 
-# --- DISPLAY AS A METRIC ---
 st.subheader("Final Prediction")
 
-# Streamlit's metric widget makes it look like a professional dashboard
 col1, col2 = st.columns(2)
 with col1:
-    st.metric(label="Latest Actual Price", value=f"{currency_symbol}{latest_actual:,.2f}")
+    # Replaced the missing variable with a simple '$'
+    st.metric(label="Latest Actual Price", value=f"${latest_actual:,.2f}")
 with col2:
-    st.metric(label="Predicted Next Price", value=f"{currency_symbol}{latest_prediction:,.2f}")
-# -----------------------------------------
-
+    st.metric(label="Predicted Next Price", value=f"${latest_prediction:,.2f}")
 # Final graph
 st.subheader('Original Price vs Predicted Price')
 # ... (rest of your graphing code stays exactly the same)
