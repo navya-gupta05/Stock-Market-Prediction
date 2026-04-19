@@ -110,7 +110,7 @@ y = y * scale
 latest_prediction = predict[-1][0]
 
 # (Optional) Get the last actual price to compare
-latest_actual = y[-1][0]
+latest_actual = y[-1]
 
 # --- DISPLAY AS A METRIC ---
 st.subheader("Final Prediction")
