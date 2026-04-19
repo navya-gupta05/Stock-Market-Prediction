@@ -31,14 +31,6 @@ elif market == "Indian Market (BSE)":
 else:
     stock = raw_symbol.upper()
 
-try:
-    ticker_info = yf.Ticker(stock).info
-    currency_code = ticker_info.get('currency', 'USD')
-except:
-    currency_code = 'USD' # Fallback just in case
-
-currency_symbol = '₹' if currency_code == 'INR' else '$'
-
 # Fetch 10 years of daily data up to the current date
 data = yf.download(stock, period='10y', interval='1d')
 
@@ -95,7 +87,7 @@ plt.plot(data.Close, 'g', label='Closing Price')
 plt.legend()
 st.pyplot(fig3)
 
-# Prepare data
+# --- 1. PREPARE TEST DATA ---
 x = []
 y = []
 
@@ -105,32 +97,32 @@ for i in range(100, data_test_scale.shape[0]):
 
 x, y = np.array(x), np.array(y)
 
-# Predict
+# --- 2. PREDICT ---
 predict = model.predict(x)
 
-# Reverse scaling
-scale = 1 / scaler.scale_
-predict = predict * scale
-y = y * scale
+# --- 3. THE FIX: REVERSE SCALING PROPERLY ---
+# We use inverse_transform so the scaler handles the math perfectly
+# This ensures Reliance shows as ~2900 instead of ~200
+predict = scaler.inverse_transform(predict)
+y_transformed = scaler.inverse_transform(y.reshape(-1, 1))
 
-## --- EXTRACT THE FINAL PREDICTED VALUE ---
-latest_prediction = predict[-1][0]
-latest_actual = y[-1]
+# --- 4. DYNAMIC CURRENCY SYMBOL ---
+currency_symbol = "₹" if "Indian" in market else "$"
 
-
-# --- DISPLAY AS A METRIC ---
+# --- 5. DISPLAY METRICS ---
 st.subheader("Final Prediction")
-
 col1, col2 = st.columns(2)
 with col1:
-    # Use the dynamic currency_symbol instead of the hardcoded '$'
-    st.metric(label="Latest Actual Price", value=f"{currency_symbol}{latest_actual:,.2f}")
+    # Use y_transformed to show the real price in the metric
+    st.metric(label="Latest Actual Price", value=f"{currency_symbol}{y_transformed[-1][0]:,.2f}")
 with col2:
-    st.metric(label="Predicted Next Price", value=f"{currency_symbol}{latest_prediction:,.2f}")
-# Final graph
+    st.metric(label="Predicted Next Price", value=f"{currency_symbol}{predict[-1][0]:,.2f}")
+
+# --- 6. CORRECTED FINAL GRAPH ---
 st.subheader('Actual Price vs Predicted Price')
 fig4 = plt.figure(figsize=(8,6))
-plt.plot(y, 'g', label='Actual Price')
+# We plot the transformed values so the Y-axis shows the true currency value
+plt.plot(y_transformed, 'g', label='Actual Price') 
 plt.plot(predict, 'r', label='Predicted Price')
 plt.xlabel('Time')
 plt.ylabel('Price')
