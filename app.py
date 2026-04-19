@@ -121,10 +121,6 @@ with col1:
 with col2:
     st.metric(label="Predicted Next Price", value=f"${latest_prediction:,.2f}")
 # Final graph
-st.subheader('Original Price vs Predicted Price')
-# ... (rest of your graphing code stays exactly the same)
-
-# Final graph
 st.subheader('Actual Price vs Predicted Price')
 fig4 = plt.figure(figsize=(8,6))
 plt.plot(y, 'g', label='Actual Price')
