@@ -6,23 +6,41 @@ import streamlit as st
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import MinMaxScaler
 
-# Load model (cached)
-model = load_model("Stock_Predictions_Model.h5")
 
+model = load_model("Stock_Predictions_Model.h5")
 
 st.header('Stock Market Predictor')
 
-# Input
-stock = st.text_input('Enter Stock Symbol', 'GOOG')
-start = '2016-01-01'
-end = '2026-04-01'
+# Market selector
+market = st.selectbox(
+    "Select Market", 
+    ("US Market (NASDAQ/NYSE)", "Indian Market (NSE)", "Indian Market (BSE)")
+)
 
-# Fetch data
-data = yf.download(stock, start, end)
+# Set a default ticker based on the market
+default_ticker = 'RELIANCE' if 'Indian' in market else 'GOOG'
 
+# Get the raw symbol from the user
+raw_symbol = st.text_input('Enter Stock Symbol', default_ticker)
+
+# Automatically format the symbol for yfinance
+if market == "Indian Market (NSE)":
+    stock = raw_symbol.upper() + ".NS"
+elif market == "Indian Market (BSE)":
+    stock = raw_symbol.upper() + ".BO"
+else:
+    stock = raw_symbol.upper()
+
+# Fetch 10 years of daily data up to the current date
+data = yf.download(stock, period='10y', interval='1d')
+
+# Safety Check for API blocks
 if data.empty:
     st.error(f"No data found for '{stock}'. This is likely due to Yahoo Finance blocking the request or an invalid ticker.")
     st.stop()
+
+if isinstance(data.columns, pd.MultiIndex):
+    data.columns = data.columns.droplevel(1)
 
 st.subheader('Stock Data')
 st.write(data)
@@ -88,7 +106,7 @@ predict = predict * scale
 y = y * scale
 
 # Final graph
-st.subheader('Original Price vs Predicted Price')
+st.subheader('Actual Price vs Predicted Price')
 fig4 = plt.figure(figsize=(8,6))
 plt.plot(y, 'g', label='Original Price')
 plt.plot(predict, 'r', label='Predicted Price')
