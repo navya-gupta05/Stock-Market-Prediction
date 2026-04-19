@@ -31,6 +31,14 @@ elif market == "Indian Market (BSE)":
 else:
     stock = raw_symbol.upper()
 
+try:
+    ticker_info = yf.Ticker(stock).info
+    currency_code = ticker_info.get('currency', 'USD')
+except:
+    currency_code = 'USD' # Fallback just in case
+
+currency_symbol = '₹' if currency_code == 'INR' else '$'
+
 # Fetch 10 years of daily data up to the current date
 data = yf.download(stock, period='10y', interval='1d')
 
@@ -109,12 +117,6 @@ y = y * scale
 latest_prediction = predict[-1][0]
 latest_actual = y[-1]
 
-# --- DYNAMIC CURRENCY SYMBOL ---
-# Check if the user selected an Indian market
-if "Indian" in market:
-    currency_symbol = "₹"
-else:
-    currency_symbol = "$"
 
 # --- DISPLAY AS A METRIC ---
 st.subheader("Final Prediction")
