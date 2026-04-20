@@ -87,7 +87,7 @@ plt.plot(data.Close, 'g', label='Closing Price')
 plt.legend()
 st.pyplot(fig3)
 
-# --- 1. PREPARE TEST DATA ---
+
 x = []
 y = []
 
@@ -97,31 +97,25 @@ for i in range(100, data_test_scale.shape[0]):
 
 x, y = np.array(x), np.array(y)
 
-# --- 2. PREDICT ---
+
 predict = model.predict(x)
 
-# --- 3. THE FIX: REVERSE SCALING PROPERLY ---
-# We use inverse_transform so the scaler handles the math perfectly
-# This ensures Reliance shows as ~2900 instead of ~200
 predict = scaler.inverse_transform(predict)
 y_transformed = scaler.inverse_transform(y.reshape(-1, 1))
 
-# --- 4. DYNAMIC CURRENCY SYMBOL ---
 currency_symbol = "₹" if "Indian" in market else "$"
 
-# --- 5. DISPLAY METRICS ---
 st.subheader("Final Prediction")
 col1, col2 = st.columns(2)
 with col1:
-    # Use y_transformed to show the real price in the metric
     st.metric(label="Latest Actual Price", value=f"{currency_symbol}{y_transformed[-1][0]:,.2f}")
 with col2:
     st.metric(label="Predicted Next Price", value=f"{currency_symbol}{predict[-1][0]:,.2f}")
 
-# --- 6. CORRECTED FINAL GRAPH ---
+
 st.subheader('Actual Price vs Predicted Price')
 fig4 = plt.figure(figsize=(8,6))
-# We plot the transformed values so the Y-axis shows the true currency value
+
 plt.plot(y_transformed, 'g', label='Actual Price') 
 plt.plot(predict, 'r', label='Predicted Price')
 plt.xlabel('Time')
