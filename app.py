@@ -11,19 +11,16 @@ model = load_model("Stock_Predictions_Model.h5")
 
 st.header('Stock Market Predictor')
 
-# Market selector
 market = st.selectbox(
     "Select Market", 
     ("US Market (NASDAQ/NYSE)", "Indian Market (NSE)", "Indian Market (BSE)")
 )
 
-# Set a default ticker based on the market
+
 default_ticker = 'RELIANCE' if 'Indian' in market else 'GOOG'
 
-# Get the raw symbol from the user
 raw_symbol = st.text_input('Enter Stock Symbol', default_ticker)
 
-# Automatically format the symbol for yfinance
 if market == "Indian Market (NSE)":
     stock = raw_symbol.upper() + ".NS"
 elif market == "Indian Market (BSE)":
@@ -31,10 +28,9 @@ elif market == "Indian Market (BSE)":
 else:
     stock = raw_symbol.upper()
 
-# Fetch 10 years of daily data up to the current date
+
 data = yf.download(stock, period='10y', interval='1d')
 
-# Safety Check for API blocks
 if data.empty:
     st.error(f"No data found for '{stock}'. This is likely due to Yahoo Finance blocking the request or an invalid ticker.")
     st.stop()
